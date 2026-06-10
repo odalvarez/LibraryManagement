@@ -27,7 +27,6 @@ public class GlobalExceptionMiddleware
         }
     }
 
-    // MAP EXCEPTION TYPE TO HTTP RESPONSE
     private async Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
         var (statusCode, message) = exception switch

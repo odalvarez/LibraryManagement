@@ -25,7 +25,6 @@ public class BookService : IBookService
         _maxAllowed = options.Value.MaxAllowed;
     }
 
-    // GET PAGINATED BOOKS WITH AUTHOR DATA
     public async Task<IEnumerable<Book>> GetAllAsync(int page, int pageSize, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Fetching books - page {Page}, pageSize {PageSize}", page, pageSize);
@@ -38,13 +37,11 @@ public class BookService : IBookService
             .ToListAsync(cancellationToken);
     }
 
-    // GET TOTAL BOOK COUNT
     public async Task<int> GetTotalCountAsync(CancellationToken cancellationToken = default)
     {
         return await _context.Books.CountAsync(cancellationToken);
     }
 
-    // GET BOOK BY ID WITH AUTHOR DATA
     public async Task<Book?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         return await _context.Books
@@ -53,7 +50,6 @@ public class BookService : IBookService
             .FirstOrDefaultAsync(b => b.Id == id, cancellationToken);
     }
 
-    // CREATE NEW BOOK — VALIDATES MAX LIMIT AND AUTHOR EXISTENCE
     public async Task<Book> CreateAsync(string title, int year, string genre, int pages, int authorId, CancellationToken cancellationToken = default)
     {
         var currentCount = await _context.Books.CountAsync(cancellationToken);
@@ -80,7 +76,6 @@ public class BookService : IBookService
         return book;
     }
 
-    // UPDATE EXISTING BOOK — VALIDATES AUTHOR EXISTENCE
     public async Task<Book> UpdateAsync(int id, string title, int year, string genre, int pages, int authorId, CancellationToken cancellationToken = default)
     {
         var book = await _context.Books.FindAsync([id], cancellationToken)
@@ -102,7 +97,6 @@ public class BookService : IBookService
         return book;
     }
 
-    // DELETE BOOK
     public async Task DeleteAsync(int id, CancellationToken cancellationToken = default)
     {
         var book = await _context.Books.FindAsync([id], cancellationToken)

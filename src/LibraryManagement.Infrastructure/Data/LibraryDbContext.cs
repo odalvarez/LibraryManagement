@@ -13,7 +13,6 @@ public class LibraryDbContext : DbContext, ILibraryDbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // AUTHOR CONFIGURATION
         modelBuilder.Entity<Author>(entity =>
         {
             entity.HasKey(a => a.Id);
@@ -23,7 +22,6 @@ public class LibraryDbContext : DbContext, ILibraryDbContext
             entity.HasIndex(a => a.Email).IsUnique();
         });
 
-        // BOOK CONFIGURATION
         modelBuilder.Entity<Book>(entity =>
         {
             entity.HasKey(b => b.Id);

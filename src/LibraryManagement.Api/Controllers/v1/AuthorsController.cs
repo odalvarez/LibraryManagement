@@ -19,7 +19,6 @@ public class AuthorsController : ControllerBase
         _authorService = authorService;
     }
 
-    // GET PAGINATED AUTHORS
     [HttpGet]
     [SwaggerOperation(Summary = "Listar autores", Description = "Retorna la lista paginada de autores registrados.")]
     [ProducesResponseType(typeof(PagedResultDto<AuthorResponseDto>), StatusCodes.Status200OK)]
@@ -39,7 +38,6 @@ public class AuthorsController : ControllerBase
         return Ok(result);
     }
 
-    // GET AUTHOR BY ID
     [HttpGet("{id:int}")]
     [SwaggerOperation(Summary = "Obtener autor por ID", Description = "Retorna los datos de un autor específico. Devuelve 404 si no existe.")]
     [ProducesResponseType(typeof(AuthorResponseDto), StatusCodes.Status200OK)]
@@ -53,7 +51,6 @@ public class AuthorsController : ControllerBase
         return Ok(MapToResponse(author));
     }
 
-    // CREATE AUTHOR
     [HttpPost]
     [SwaggerOperation(Summary = "Registrar autor", Description = "Crea un nuevo autor. Todos los campos son obligatorios.")]
     [ProducesResponseType(typeof(AuthorResponseDto), StatusCodes.Status201Created)]
@@ -64,7 +61,6 @@ public class AuthorsController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = author.Id }, MapToResponse(author));
     }
 
-    // UPDATE AUTHOR
     [HttpPut("{id:int}")]
     [SwaggerOperation(Summary = "Actualizar autor", Description = "Actualiza los datos de un autor existente. Devuelve 404 si no existe.")]
     [ProducesResponseType(typeof(AuthorResponseDto), StatusCodes.Status200OK)]
@@ -76,7 +72,6 @@ public class AuthorsController : ControllerBase
         return Ok(MapToResponse(author));
     }
 
-    // DELETE AUTHOR
     [HttpDelete("{id:int}")]
     [SwaggerOperation(Summary = "Eliminar autor", Description = "Elimina un autor por ID. Devuelve 404 si no existe.")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -87,7 +82,6 @@ public class AuthorsController : ControllerBase
         return NoContent();
     }
 
-    // MAP ENTITY TO RESPONSE DTO
     private static AuthorResponseDto MapToResponse(Domain.Entities.Author author) => new()
     {
         Id = author.Id,

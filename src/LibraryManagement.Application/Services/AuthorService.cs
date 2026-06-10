@@ -17,7 +17,6 @@ public class AuthorService : IAuthorService
         _logger = logger;
     }
 
-    // GET PAGINATED AUTHORS
     public async Task<IEnumerable<Author>> GetAllAsync(int page, int pageSize, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Fetching authors - page {Page}, pageSize {PageSize}", page, pageSize);
@@ -29,13 +28,11 @@ public class AuthorService : IAuthorService
             .ToListAsync(cancellationToken);
     }
 
-    // GET TOTAL AUTHOR COUNT
     public async Task<int> GetTotalCountAsync(CancellationToken cancellationToken = default)
     {
         return await _context.Authors.CountAsync(cancellationToken);
     }
 
-    // GET AUTHOR BY ID
     public async Task<Author?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         return await _context.Authors
@@ -43,7 +40,6 @@ public class AuthorService : IAuthorService
             .FirstOrDefaultAsync(a => a.Id == id, cancellationToken);
     }
 
-    // CREATE NEW AUTHOR
     public async Task<Author> CreateAsync(string fullName, DateTime birthDate, string city, string email, CancellationToken cancellationToken = default)
     {
         var author = new Author
@@ -61,7 +57,6 @@ public class AuthorService : IAuthorService
         return author;
     }
 
-    // UPDATE EXISTING AUTHOR
     public async Task<Author> UpdateAsync(int id, string fullName, DateTime birthDate, string city, string email, CancellationToken cancellationToken = default)
     {
         var author = await _context.Authors.FindAsync([id], cancellationToken)
@@ -78,7 +73,6 @@ public class AuthorService : IAuthorService
         return author;
     }
 
-    // DELETE AUTHOR
     public async Task DeleteAsync(int id, CancellationToken cancellationToken = default)
     {
         var author = await _context.Authors.FindAsync([id], cancellationToken)

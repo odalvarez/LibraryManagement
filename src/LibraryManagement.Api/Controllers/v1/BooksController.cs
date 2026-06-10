@@ -19,7 +19,6 @@ public class BooksController : ControllerBase
         _bookService = bookService;
     }
 
-    // GET PAGINATED BOOKS
     [HttpGet]
     [SwaggerOperation(Summary = "Listar libros", Description = "Retorna la lista paginada de libros registrados, incluyendo el nombre del autor.")]
     [ProducesResponseType(typeof(PagedResultDto<BookResponseDto>), StatusCodes.Status200OK)]
@@ -39,7 +38,6 @@ public class BooksController : ControllerBase
         return Ok(result);
     }
 
-    // GET BOOK BY ID
     [HttpGet("{id:int}")]
     [SwaggerOperation(Summary = "Obtener libro por ID", Description = "Retorna los datos de un libro específico. Devuelve 404 si no existe.")]
     [ProducesResponseType(typeof(BookResponseDto), StatusCodes.Status200OK)]
@@ -53,7 +51,6 @@ public class BooksController : ControllerBase
         return Ok(MapToResponse(book));
     }
 
-    // CREATE BOOK
     [HttpPost]
     [SwaggerOperation(Summary = "Registrar libro", Description = "Crea un nuevo libro. Lanza 404 si el autor no existe, 400 si se alcanzó el máximo permitido.")]
     [ProducesResponseType(typeof(BookResponseDto), StatusCodes.Status201Created)]
@@ -65,7 +62,6 @@ public class BooksController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = book.Id }, MapToResponse(book));
     }
 
-    // UPDATE BOOK
     [HttpPut("{id:int}")]
     [SwaggerOperation(Summary = "Actualizar libro", Description = "Actualiza los datos de un libro existente. Devuelve 404 si el libro o el autor no existen.")]
     [ProducesResponseType(typeof(BookResponseDto), StatusCodes.Status200OK)]
@@ -77,7 +73,6 @@ public class BooksController : ControllerBase
         return Ok(MapToResponse(book));
     }
 
-    // DELETE BOOK
     [HttpDelete("{id:int}")]
     [SwaggerOperation(Summary = "Eliminar libro", Description = "Elimina un libro por ID. Devuelve 404 si no existe.")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -88,7 +83,6 @@ public class BooksController : ControllerBase
         return NoContent();
     }
 
-    // MAP ENTITY TO RESPONSE DTO
     private static BookResponseDto MapToResponse(Domain.Entities.Book book) => new()
     {
         Id = book.Id,

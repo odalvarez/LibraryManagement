@@ -8,7 +8,6 @@ using LibraryManagement.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
-// CONFIGURE SERILOG FROM APPSETTINGS
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(new ConfigurationBuilder()
         .AddJsonFile("appsettings.json")
@@ -20,26 +19,20 @@ Log.Logger = new LoggerConfiguration()
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog();
 
-// BOOK SETTINGS
 var bookSettings = builder.Configuration.GetSection(BookSettings.SectionName).Get<BookSettings>() ?? new BookSettings();
 builder.Services.Configure<BookServiceOptions>(options => options.MaxAllowed = bookSettings.MaxAllowed);
 
-// DATABASE
 builder.Services.AddDbContext<LibraryDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<ILibraryDbContext>(sp => sp.GetRequiredService<LibraryDbContext>());
 
-// SERVICES
 builder.Services.AddScoped<IAuthorService, AuthorService>();
 builder.Services.AddScoped<IBookService, BookService>();
 
-// FLUENT VALIDATION
 builder.Services.AddValidatorsFromAssemblyContaining<AuthorService>();
 
-// CONTROLLERS
 builder.Services.AddControllers();
 
-// API VERSIONING
 builder.Services.AddApiVersioning(options =>
 {
     options.DefaultApiVersion = new ApiVersion(1, 0);
@@ -51,7 +44,6 @@ builder.Services.AddApiVersioning(options =>
     options.SubstituteApiVersionInUrl = true;
 });
 
-// SWAGGER
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -59,17 +51,13 @@ builder.Services.AddSwaggerGen(options =>
     options.EnableAnnotations();
 });
 
-
 var app = builder.Build();
 
-// GLOBAL EXCEPTION HANDLER
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
-// SWAGGER UI
 app.UseSwagger();
 app.UseSwaggerUI(options => options.SwaggerEndpoint("/swagger/v1/swagger.json", "Library Management API v1"));
 
-// STATIC FILES
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
