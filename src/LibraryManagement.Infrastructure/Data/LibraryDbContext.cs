@@ -1,9 +1,10 @@
 using LibraryManagement.Domain.Entities;
+using LibraryManagement.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace LibraryManagement.Infrastructure.Data;
 
-public class LibraryDbContext : DbContext
+public class LibraryDbContext : DbContext, ILibraryDbContext
 {
     public LibraryDbContext(DbContextOptions<LibraryDbContext> options) : base(options) { }
 
