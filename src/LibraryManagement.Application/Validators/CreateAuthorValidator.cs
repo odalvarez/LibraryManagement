@@ -13,7 +13,8 @@ public class CreateAuthorValidator : AbstractValidator<CreateAuthorDto>
 
         RuleFor(x => x.BirthDate)
             .NotEmpty().WithMessage("La fecha de nacimiento es obligatoria.")
-            .LessThan(DateTime.Today).WithMessage("La fecha de nacimiento debe ser anterior a hoy.");
+            .LessThanOrEqualTo(_ => DateTime.Today.AddYears(-16)).WithMessage("El autor debe tener al menos 16 años.")
+            .GreaterThan(new DateTime(1900, 1, 1)).WithMessage("La fecha de nacimiento no es válida.");
 
         RuleFor(x => x.City)
             .NotEmpty().WithMessage("La ciudad de procedencia es obligatoria.")
