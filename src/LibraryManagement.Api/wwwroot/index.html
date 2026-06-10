@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Library Management</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Library Management</h1>
+    <nav>
+      <button id="tab-authors" class="tab active" onclick="showTab('authors')">Autores</button>
+      <button id="tab-books" class="tab" onclick="showTab('books')">Libros</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- AUTHORS SECTION -->
+    <section id="section-authors">
+      <div class="section-header">
+        <h2>Autores</h2>
+        <button class="btn-primary" onclick="openAuthorModal()">+ Nuevo autor</button>
+      </div>
+      <div id="authors-error" class="alert alert-error hidden"></div>
+      <table id="authors-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nombre completo *</th>
+            <th>Fecha de nacimiento *</th>
+            <th>Ciudad *</th>
+            <th>Correo electrónico *</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="authors-body"></tbody>
+      </table>
+      <div id="authors-pagination" class="pagination"></div>
+    </section>
+
+    <!-- BOOKS SECTION -->
+    <section id="section-books" class="hidden">
+      <div class="section-header">
+        <h2>Libros</h2>
+        <button class="btn-primary" onclick="openBookModal()">+ Nuevo libro</button>
+      </div>
+      <div id="books-error" class="alert alert-error hidden"></div>
+      <table id="books-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Título *</th>
+            <th>Año *</th>
+            <th>Género *</th>
+            <th>Páginas *</th>
+            <th>Autor *</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="books-body"></tbody>
+      </table>
+      <div id="books-pagination" class="pagination"></div>
+    </section>
+  </main>
+
+  <!-- AUTHOR MODAL -->
+  <div id="author-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="author-modal-title">Nuevo autor</h3>
+        <button class="btn-close" onclick="closeAuthorModal()">✕</button>
+      </div>
+      <div id="author-form-error" class="alert alert-error hidden"></div>
+      <form id="author-form" onsubmit="submitAuthor(event)">
+        <input type="hidden" id="author-id" />
+        <label>Nombre completo *<input type="text" id="author-fullname" required maxlength="200" /></label>
+        <label>Fecha de nacimiento *<input type="date" id="author-birthdate" required /></label>
+        <label>Ciudad de procedencia *<input type="text" id="author-city" required maxlength="100" /></label>
+        <label>Correo electrónico *<input type="email" id="author-email" required maxlength="150" /></label>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" onclick="closeAuthorModal()">Cancelar</button>
+          <button type="submit" class="btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- BOOK MODAL -->
+  <div id="book-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="book-modal-title">Nuevo libro</h3>
+        <button class="btn-close" onclick="closeBookModal()">✕</button>
+      </div>
+      <div id="book-form-error" class="alert alert-error hidden"></div>
+      <form id="book-form" onsubmit="submitBook(event)">
+        <input type="hidden" id="book-id" />
+        <label>Título *<input type="text" id="book-title" required maxlength="300" /></label>
+        <label>Año *<input type="number" id="book-year" required min="1" /></label>
+        <label>Género *<input type="text" id="book-genre" required maxlength="100" /></label>
+        <label>Número de páginas *<input type="number" id="book-pages" required min="1" /></label>
+        <label>Autor *
+          <select id="book-author" required>
+            <option value="">Seleccione un autor</option>
+          </select>
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" onclick="closeBookModal()">Cancelar</button>
+          <button type="submit" class="btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- CONFIRM DELETE MODAL -->
+  <div id="confirm-modal" class="modal hidden">
+    <div class="modal-content modal-small">
+      <div class="modal-header">
+        <h3>Confirmar eliminación</h3>
+      </div>
+      <p id="confirm-message">¿Desea eliminar este registro?</p>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeConfirmModal()">Cancelar</button>
+        <button class="btn-danger" id="confirm-ok">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="overlay" class="overlay hidden" onclick="closeAllModals()"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
