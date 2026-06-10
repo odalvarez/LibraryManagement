@@ -80,25 +80,29 @@
           <h5 class="modal-title" id="author-modal-title">Nuevo autor</h5>
           <button type="button" class="btn-close" onclick="closeAuthorModal()"></button>
         </div>
-        <form id="author-form" onsubmit="submitAuthor(event)">
+        <form id="author-form" onsubmit="submitAuthor(event)" novalidate>
           <div class="modal-body">
             <div id="author-form-error" class="alert alert-danger d-none" role="alert"></div>
             <input type="hidden" id="author-id" />
             <div class="mb-3">
               <label class="form-label fw-medium">Nombre completo *</label>
               <input type="text" class="form-control" id="author-fullname" required maxlength="200" />
+              <div class="invalid-feedback">El nombre completo es obligatorio.</div>
             </div>
             <div class="mb-3">
               <label class="form-label fw-medium">Fecha de nacimiento *</label>
               <input type="date" class="form-control" id="author-birthdate" required />
+              <div class="invalid-feedback">La fecha de nacimiento es obligatoria.</div>
             </div>
             <div class="mb-3">
               <label class="form-label fw-medium">Ciudad de procedencia *</label>
               <input type="text" class="form-control" id="author-city" required maxlength="100" />
+              <div class="invalid-feedback">La ciudad de procedencia es obligatoria.</div>
             </div>
             <div class="mb-3">
               <label class="form-label fw-medium">Correo electrónico *</label>
               <input type="email" class="form-control" id="author-email" required maxlength="150" />
+              <div class="invalid-feedback">Ingresa un correo electrónico válido.</div>
             </div>
           </div>
           <div class="modal-footer">
@@ -118,31 +122,36 @@
           <h5 class="modal-title" id="book-modal-title">Nuevo libro</h5>
           <button type="button" class="btn-close" onclick="closeBookModal()"></button>
         </div>
-        <form id="book-form" onsubmit="submitBook(event)">
+        <form id="book-form" onsubmit="submitBook(event)" novalidate>
           <div class="modal-body">
             <div id="book-form-error" class="alert alert-danger d-none" role="alert"></div>
             <input type="hidden" id="book-id" />
             <div class="mb-3">
               <label class="form-label fw-medium">Título *</label>
               <input type="text" class="form-control" id="book-title" required maxlength="300" />
+              <div class="invalid-feedback">El título es obligatorio.</div>
             </div>
             <div class="mb-3">
               <label class="form-label fw-medium">Año *</label>
               <input type="number" class="form-control" id="book-year" required min="1" />
+              <div class="invalid-feedback">El año es obligatorio y no puede ser futuro.</div>
             </div>
             <div class="mb-3">
               <label class="form-label fw-medium">Género *</label>
               <input type="text" class="form-control" id="book-genre" required maxlength="100" />
+              <div class="invalid-feedback">El género es obligatorio.</div>
             </div>
             <div class="mb-3">
               <label class="form-label fw-medium">Número de páginas *</label>
               <input type="number" class="form-control" id="book-pages" required min="1" />
+              <div class="invalid-feedback">El número de páginas debe ser mayor a 0.</div>
             </div>
             <div class="mb-3">
               <label class="form-label fw-medium">Autor *</label>
               <select class="form-select" id="book-author" required>
                 <option value="">Seleccione un autor</option>
               </select>
+              <div class="invalid-feedback">El autor es obligatorio.</div>
             </div>
           </div>
           <div class="modal-footer">

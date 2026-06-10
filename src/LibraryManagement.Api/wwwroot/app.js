@@ -83,6 +83,7 @@ function renderAuthors(data) {
 }
 
 function openAuthorModal(author = null) {
+  document.getElementById('author-form').classList.remove('was-validated');
   hideError('author-form-error');
   document.getElementById('author-id').value = author?.id ?? '';
   document.getElementById('author-fullname').value = author?.fullName ?? '';
@@ -113,6 +114,9 @@ async function editAuthor(id) {
 
 async function submitAuthor(e) {
   e.preventDefault();
+  const form = e.target;
+  form.classList.add('was-validated');
+  if (!form.checkValidity()) return;
   hideError('author-form-error');
 
   const id = document.getElementById('author-id').value;
@@ -129,6 +133,7 @@ async function submitAuthor(e) {
     } else {
       await apiFetch('/authors', { method: 'POST', body: JSON.stringify(payload) });
     }
+    form.classList.remove('was-validated');
     closeAuthorModal();
     loadAuthors();
   } catch (e) {
@@ -175,6 +180,7 @@ function renderBooks(data) {
 }
 
 async function openBookModal(book = null) {
+  document.getElementById('book-form').classList.remove('was-validated');
   hideError('book-form-error');
 
   try {
@@ -215,6 +221,9 @@ async function editBook(id) {
 
 async function submitBook(e) {
   e.preventDefault();
+  const form = e.target;
+  form.classList.add('was-validated');
+  if (!form.checkValidity()) return;
   hideError('book-form-error');
 
   const id = document.getElementById('book-id').value;
@@ -232,6 +241,7 @@ async function submitBook(e) {
     } else {
       await apiFetch('/books', { method: 'POST', body: JSON.stringify(payload) });
     }
+    form.classList.remove('was-validated');
     closeBookModal();
     loadBooks();
   } catch (e) {
