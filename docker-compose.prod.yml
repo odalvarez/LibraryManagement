@@ -1,0 +1,27 @@
+services:
+  db:
+    image: mcr.microsoft.com/azure-sql-edge:latest
+    environment:
+      SA_PASSWORD: "${DB_PASSWORD}"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Developer"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqldata_prod:/var/opt/mssql
+
+  api:
+    build:
+      context: .
+      dockerfile: src/LibraryManagement.Api/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Server=db,1433;Database=LibraryManagement;User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True;
+      - BookSettings__MaxAllowed=${BOOK_MAX_ALLOWED:-10}
+    ports:
+      - "5000:8080"
+    depends_on:
+      - db
+
+volumes:
+  sqldata_prod:
