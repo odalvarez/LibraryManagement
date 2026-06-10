@@ -1,5 +1,6 @@
 using Asp.Versioning;
 using FluentValidation;
+using FluentValidation.AspNetCore;
 using LibraryManagement.Api.Middleware;
 using LibraryManagement.Api.Settings;
 using LibraryManagement.Application.Services;
@@ -30,6 +31,7 @@ builder.Services.AddScoped<IAuthorService, AuthorService>();
 builder.Services.AddScoped<IBookService, BookService>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<AuthorService>();
+builder.Services.AddFluentValidationAutoValidation();
 
 builder.Services.AddControllers();
 

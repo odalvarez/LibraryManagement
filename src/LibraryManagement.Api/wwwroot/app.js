@@ -1,11 +1,9 @@
 const API = '/api/v1';
 
-// STATE
 let authorsPage = 1;
 let booksPage = 1;
 const PAGE_SIZE = 10;
 
-// INIT
 document.addEventListener('DOMContentLoaded', () => {
   loadAuthors();
   loadBooks();
@@ -13,8 +11,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ─── TAB NAVIGATION ────────────────────────────────────────────
 function showTab(tab) {
-  document.getElementById('section-authors').classList.toggle('hidden', tab !== 'authors');
-  document.getElementById('section-books').classList.toggle('hidden', tab !== 'books');
+  document.getElementById('section-authors').classList.toggle('d-none', tab !== 'authors');
+  document.getElementById('section-books').classList.toggle('d-none', tab !== 'books');
   document.getElementById('tab-authors').classList.toggle('active', tab === 'authors');
   document.getElementById('tab-books').classList.toggle('active', tab === 'books');
 }
@@ -27,6 +25,10 @@ async function apiFetch(path, options = {}) {
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({ title: 'Error desconocido' }));
+    if (err.errors) {
+      const messages = Object.values(err.errors).flat();
+      throw new Error(messages[0] || err.title || 'Error en la solicitud');
+    }
     throw new Error(err.title || 'Error en la solicitud');
   }
   if (res.status === 204) return null;
@@ -36,11 +38,11 @@ async function apiFetch(path, options = {}) {
 function showError(elementId, message) {
   const el = document.getElementById(elementId);
   el.textContent = message;
-  el.classList.remove('hidden');
+  el.classList.remove('d-none');
 }
 
 function hideError(elementId) {
-  document.getElementById(elementId).classList.add('hidden');
+  document.getElementById(elementId).classList.add('d-none');
 }
 
 // ─── AUTHORS ────────────────────────────────────────────────────
@@ -59,19 +61,19 @@ function renderAuthors(data) {
   tbody.innerHTML = '';
 
   if (!data.items?.length) {
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999;padding:2rem">Sin registros</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">Sin registros</td></tr>';
   } else {
     data.items.forEach(a => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td>${a.id}</td>
+        <td class="text-muted small">${a.id}</td>
         <td>${esc(a.fullName)}</td>
         <td>${formatDate(a.birthDate)}</td>
         <td>${esc(a.city)}</td>
         <td>${esc(a.email)}</td>
-        <td>
-          <button class="btn-icon" onclick="editAuthor(${a.id})">Editar</button>
-          <button class="btn-icon delete" onclick="confirmDelete('author', ${a.id})">Eliminar</button>
+        <td class="text-end">
+          <button class="btn btn-sm btn-outline-secondary me-1" onclick="editAuthor(${a.id})">Editar</button>
+          <button class="btn btn-sm btn-outline-danger" onclick="confirmDelete('author', ${a.id})">Eliminar</button>
         </td>`;
       tbody.appendChild(tr);
     });
@@ -84,10 +86,17 @@ function openAuthorModal(author = null) {
   hideError('author-form-error');
   document.getElementById('author-id').value = author?.id ?? '';
   document.getElementById('author-fullname').value = author?.fullName ?? '';
-  document.getElementById('author-birthdate').value = author ? author.birthDate.substring(0, 10) : '';
   document.getElementById('author-city').value = author?.city ?? '';
   document.getElementById('author-email').value = author?.email ?? '';
   document.getElementById('author-modal-title').textContent = author ? 'Editar autor' : 'Nuevo autor';
+
+  const birthdateInput = document.getElementById('author-birthdate');
+  birthdateInput.value = author ? author.birthDate.substring(0, 10) : '';
+  const maxDate = new Date();
+  maxDate.setFullYear(maxDate.getFullYear() - 16);
+  birthdateInput.max = maxDate.toISOString().slice(0, 10);
+  birthdateInput.min = '1900-01-01';
+
   openModal('author-modal');
 }
 
@@ -143,20 +152,20 @@ function renderBooks(data) {
   tbody.innerHTML = '';
 
   if (!data.items?.length) {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#999;padding:2rem">Sin registros</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-4">Sin registros</td></tr>';
   } else {
     data.items.forEach(b => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td>${b.id}</td>
+        <td class="text-muted small">${b.id}</td>
         <td>${esc(b.title)}</td>
         <td>${b.year}</td>
         <td>${esc(b.genre)}</td>
         <td>${b.pages}</td>
         <td>${esc(b.authorName)}</td>
-        <td>
-          <button class="btn-icon" onclick="editBook(${b.id})">Editar</button>
-          <button class="btn-icon delete" onclick="confirmDelete('book', ${b.id})">Eliminar</button>
+        <td class="text-end">
+          <button class="btn btn-sm btn-outline-secondary me-1" onclick="editBook(${b.id})">Editar</button>
+          <button class="btn btn-sm btn-outline-danger" onclick="confirmDelete('book', ${b.id})">Eliminar</button>
         </td>`;
       tbody.appendChild(tr);
     });
@@ -168,7 +177,6 @@ function renderBooks(data) {
 async function openBookModal(book = null) {
   hideError('book-form-error');
 
-  // LOAD AUTHORS FOR DROPDOWN
   try {
     const authors = await apiFetch(`/authors?page=1&pageSize=100`);
     const select = document.getElementById('book-author');
@@ -187,6 +195,7 @@ async function openBookModal(book = null) {
   document.getElementById('book-id').value = book?.id ?? '';
   document.getElementById('book-title').value = book?.title ?? '';
   document.getElementById('book-year').value = book?.year ?? '';
+  document.getElementById('book-year').max = new Date().getFullYear();
   document.getElementById('book-genre').value = book?.genre ?? '';
   document.getElementById('book-pages').value = book?.pages ?? '';
   document.getElementById('book-modal-title').textContent = book ? 'Editar libro' : 'Nuevo libro';
@@ -261,17 +270,11 @@ function closeConfirmModal() { closeModal('confirm-modal'); }
 
 // ─── MODAL HELPERS ───────────────────────────────────────────────
 function openModal(id) {
-  document.getElementById(id).classList.remove('hidden');
-  document.getElementById('overlay').classList.remove('hidden');
+  bootstrap.Modal.getOrCreateInstance(document.getElementById(id)).show();
 }
 
 function closeModal(id) {
-  document.getElementById(id).classList.add('hidden');
-  document.getElementById('overlay').classList.add('hidden');
-}
-
-function closeAllModals() {
-  ['author-modal', 'book-modal', 'confirm-modal'].forEach(closeModal);
+  bootstrap.Modal.getInstance(document.getElementById(id))?.hide();
 }
 
 // ─── PAGINATION ─────────────────────────────────────────────────
@@ -280,20 +283,25 @@ function renderPagination(containerId, currentPage, totalPages, onPageChange) {
   container.innerHTML = '';
   if (totalPages <= 1) return;
 
-  const prev = document.createElement('button');
-  prev.textContent = '‹ Anterior';
-  prev.disabled = currentPage === 1;
-  prev.onclick = () => onPageChange(currentPage - 1);
+  const ul = document.createElement('ul');
+  ul.className = 'pagination pagination-sm mb-0';
 
-  const info = document.createElement('span');
-  info.textContent = `Página ${currentPage} de ${totalPages}`;
+  const prevLi = document.createElement('li');
+  prevLi.className = `page-item${currentPage === 1 ? ' disabled' : ''}`;
+  prevLi.innerHTML = `<button class="page-link">‹</button>`;
+  if (currentPage > 1) prevLi.querySelector('button').onclick = () => onPageChange(currentPage - 1);
 
-  const next = document.createElement('button');
-  next.textContent = 'Siguiente ›';
-  next.disabled = currentPage === totalPages;
-  next.onclick = () => onPageChange(currentPage + 1);
+  const infoLi = document.createElement('li');
+  infoLi.className = 'page-item disabled';
+  infoLi.innerHTML = `<span class="page-link">${currentPage} / ${totalPages}</span>`;
 
-  container.append(prev, info, next);
+  const nextLi = document.createElement('li');
+  nextLi.className = `page-item${currentPage === totalPages ? ' disabled' : ''}`;
+  nextLi.innerHTML = `<button class="page-link">›</button>`;
+  if (currentPage < totalPages) nextLi.querySelector('button').onclick = () => onPageChange(currentPage + 1);
+
+  ul.append(prevLi, infoLi, nextLi);
+  container.appendChild(ul);
 }
 
 // ─── UTILS ──────────────────────────────────────────────────────
