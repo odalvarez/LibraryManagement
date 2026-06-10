@@ -56,6 +56,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new() { Title = "Library Management API", Version = "v1" });
+    options.EnableAnnotations();
 });
 
 
