@@ -73,7 +73,7 @@ public class AuthorsController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
-    [SwaggerOperation(Summary = "Eliminar autor", Description = "Elimina un autor por ID. Devuelve 404 si no existe.")]
+    [SwaggerOperation(Summary = "Eliminar autor", Description = "Marca el autor como eliminado (soft delete). No se elimina físicamente de la base de datos. Devuelve 404 si no existe.")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)

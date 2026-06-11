@@ -8,6 +8,8 @@ public class Book
     public string Genre { get; set; } = string.Empty;
     public int Pages { get; set; }
 
+    public bool IsDeleted { get; set; }
+
     public int AuthorId { get; set; }
     public Author Author { get; set; } = null!;
 }

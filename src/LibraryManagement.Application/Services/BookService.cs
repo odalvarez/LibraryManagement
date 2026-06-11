@@ -78,7 +78,8 @@ public class BookService : IBookService
 
     public async Task<Book> UpdateAsync(int id, string title, int year, string genre, int pages, int authorId, CancellationToken cancellationToken = default)
     {
-        var book = await _context.Books.FindAsync([id], cancellationToken)
+        var book = await _context.Books
+            .FirstOrDefaultAsync(b => b.Id == id, cancellationToken)
             ?? throw new KeyNotFoundException($"No se encontró el libro con Id {id}.");
 
         var authorExists = await _context.Authors.AnyAsync(a => a.Id == authorId, cancellationToken);
@@ -99,12 +100,13 @@ public class BookService : IBookService
 
     public async Task DeleteAsync(int id, CancellationToken cancellationToken = default)
     {
-        var book = await _context.Books.FindAsync([id], cancellationToken)
+        var book = await _context.Books
+            .FirstOrDefaultAsync(b => b.Id == id, cancellationToken)
             ?? throw new KeyNotFoundException($"No se encontró el libro con Id {id}.");
 
-        _context.Books.Remove(book);
+        book.IsDeleted = true;
         await _context.SaveChangesAsync(cancellationToken);
 
-        _logger.LogInformation("Book {BookId} deleted", id);
+        _logger.LogInformation("Book {BookId} soft-deleted", id);
     }
 }

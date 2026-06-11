@@ -42,6 +42,10 @@ public class AuthorService : IAuthorService
 
     public async Task<Author> CreateAsync(string fullName, DateTime birthDate, string city, string email, CancellationToken cancellationToken = default)
     {
+        var emailTaken = await _context.Authors.AnyAsync(a => a.Email == email, cancellationToken);
+        if (emailTaken)
+            throw new DuplicateEmailException();
+
         var author = new Author
         {
             FullName = fullName,
@@ -59,8 +63,13 @@ public class AuthorService : IAuthorService
 
     public async Task<Author> UpdateAsync(int id, string fullName, DateTime birthDate, string city, string email, CancellationToken cancellationToken = default)
     {
-        var author = await _context.Authors.FindAsync([id], cancellationToken)
+        var author = await _context.Authors
+            .FirstOrDefaultAsync(a => a.Id == id, cancellationToken)
             ?? throw new AuthorNotFoundException();
+
+        var emailTaken = await _context.Authors.AnyAsync(a => a.Email == email && a.Id != id, cancellationToken);
+        if (emailTaken)
+            throw new DuplicateEmailException();
 
         author.FullName = fullName;
         author.BirthDate = birthDate;
@@ -75,12 +84,13 @@ public class AuthorService : IAuthorService
 
     public async Task DeleteAsync(int id, CancellationToken cancellationToken = default)
     {
-        var author = await _context.Authors.FindAsync([id], cancellationToken)
+        var author = await _context.Authors
+            .FirstOrDefaultAsync(a => a.Id == id, cancellationToken)
             ?? throw new AuthorNotFoundException();
 
-        _context.Authors.Remove(author);
+        author.IsDeleted = true;
         await _context.SaveChangesAsync(cancellationToken);
 
-        _logger.LogInformation("Author {AuthorId} deleted", id);
+        _logger.LogInformation("Author {AuthorId} soft-deleted", id);
     }
 }

@@ -20,6 +20,7 @@ public class LibraryDbContext : DbContext, ILibraryDbContext
             entity.Property(a => a.City).IsRequired().HasMaxLength(100);
             entity.Property(a => a.Email).IsRequired().HasMaxLength(150);
             entity.HasIndex(a => a.Email).IsUnique();
+            entity.HasQueryFilter(a => !a.IsDeleted);
         });
 
         modelBuilder.Entity<Book>(entity =>
@@ -29,6 +30,7 @@ public class LibraryDbContext : DbContext, ILibraryDbContext
             entity.Property(b => b.Genre).IsRequired().HasMaxLength(100);
             entity.Property(b => b.Year).IsRequired();
             entity.Property(b => b.Pages).IsRequired();
+            entity.HasQueryFilter(b => !b.IsDeleted);
 
             // BOOK -> AUTHOR RELATIONSHIP
             entity.HasOne(b => b.Author)

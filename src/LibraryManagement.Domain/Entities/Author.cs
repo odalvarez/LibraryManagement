@@ -8,5 +8,7 @@ public class Author
     public string City { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
 
+    public bool IsDeleted { get; set; }
+
     public ICollection<Book> Books { get; set; } = new List<Book>();
 }
