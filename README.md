@@ -2,6 +2,8 @@
 
 Sistema web para registrar libros y autores, desarrollado como prueba técnica. La API está construida en .NET 9 con arquitectura en capas, base de datos SQL Server y un frontend sencillo en HTML/JS.
 
+**Demo en producción:** https://library.forgevoid.dev
+
 ---
 
 ## Requisitos
@@ -81,3 +83,7 @@ El enunciado no pedía lo siguiente, pero se incluyó para reflejar prácticas d
 **Configuración por ambiente.** Hay tres archivos de configuración: `appsettings.json` con los valores base, `appsettings.Development.json` apuntando a SQL Server local vía Docker, y `appsettings.Production.json` apuntando a Azure SQL Edge. El connection string se puede sobreescribir con variables de entorno, lo que permite usarlo en cualquier ambiente sin recompilar.
 
 **Dos Docker Compose.** `docker-compose.yml` usa SQL Server 2022 para desarrollo local. `docker-compose.prod.yml` usa Azure SQL Edge, que corre en ARM y es la imagen compatible con la VM de producción.
+
+**Versionado de API y paginación.** Todos los endpoints están bajo `/api/v1/`. Los listados de libros y autores aceptan los parámetros `page` y `pageSize` y devuelven una respuesta envuelta en `PagedResultDto<T>` con metadatos de paginación.
+
+**CI con GitHub Actions.** Pipeline configurado en `.github/workflows/ci.yml` que ejecuta build y tests automáticamente en cada push o pull request a `main` y `develop`.
