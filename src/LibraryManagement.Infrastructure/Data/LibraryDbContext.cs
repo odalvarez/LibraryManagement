@@ -19,7 +19,7 @@ public class LibraryDbContext : DbContext, ILibraryDbContext
             entity.Property(a => a.FullName).IsRequired().HasMaxLength(200);
             entity.Property(a => a.City).IsRequired().HasMaxLength(100);
             entity.Property(a => a.Email).IsRequired().HasMaxLength(150);
-            entity.HasIndex(a => a.Email).IsUnique();
+            entity.HasIndex(a => a.Email).IsUnique().HasFilter("[IsDeleted] = 0");
             entity.HasQueryFilter(a => !a.IsDeleted);
         });
 

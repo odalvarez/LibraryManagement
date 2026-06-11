@@ -11,8 +11,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ─── TAB NAVIGATION ────────────────────────────────────────────
 function showTab(tab) {
-  document.getElementById('section-authors').classList.toggle('d-none', tab !== 'authors');
-  document.getElementById('section-books').classList.toggle('d-none', tab !== 'books');
+  document.getElementById('section-authors').classList.toggle('hidden', tab !== 'authors');
+  document.getElementById('section-books').classList.toggle('hidden', tab !== 'books');
   document.getElementById('tab-authors').classList.toggle('active', tab === 'authors');
   document.getElementById('tab-books').classList.toggle('active', tab === 'books');
 }
@@ -97,6 +97,7 @@ function openAuthorModal(author = null) {
   maxDate.setFullYear(maxDate.getFullYear() - 16);
   birthdateInput.max = maxDate.toISOString().slice(0, 10);
   birthdateInput.min = '1900-01-01';
+  birthdateInput.oninput = () => syncBirthDateFeedback(birthdateInput);
 
   openModal('author-modal');
 }
@@ -115,6 +116,7 @@ async function editAuthor(id) {
 async function submitAuthor(e) {
   e.preventDefault();
   const form = e.target;
+  syncBirthDateFeedback(document.getElementById('author-birthdate'));
   form.classList.add('was-validated');
   if (!form.checkValidity()) return;
   hideError('author-form-error');
@@ -136,6 +138,7 @@ async function submitAuthor(e) {
     form.classList.remove('was-validated');
     closeAuthorModal();
     loadAuthors();
+    showSuccess(id ? 'Autor actualizado correctamente.' : 'Autor registrado correctamente.');
   } catch (e) {
     showError('author-form-error', e.message);
   }
@@ -244,6 +247,7 @@ async function submitBook(e) {
     form.classList.remove('was-validated');
     closeBookModal();
     loadBooks();
+    showSuccess(id ? 'Libro actualizado correctamente.' : 'Libro registrado correctamente.');
   } catch (e) {
     showError('book-form-error', e.message);
   }
@@ -268,8 +272,8 @@ async function executeDelete() {
 
   try {
     await apiFetch(`/${type === 'author' ? 'authors' : 'books'}/${id}`, { method: 'DELETE' });
-    if (type === 'author') loadAuthors();
-    else loadBooks();
+    if (type === 'author') { loadAuthors(); showSuccess('Autor eliminado.'); }
+    else { loadBooks(); showSuccess('Libro eliminado.'); }
   } catch (e) {
     const errorId = type === 'author' ? 'authors-error' : 'books-error';
     showError(errorId, e.message);
@@ -280,11 +284,20 @@ function closeConfirmModal() { closeModal('confirm-modal'); }
 
 // ─── MODAL HELPERS ───────────────────────────────────────────────
 function openModal(id) {
-  bootstrap.Modal.getOrCreateInstance(document.getElementById(id)).show();
+  document.getElementById(id).classList.remove('hidden');
+  document.getElementById('overlay').classList.remove('hidden');
 }
 
 function closeModal(id) {
-  bootstrap.Modal.getInstance(document.getElementById(id))?.hide();
+  document.getElementById(id).classList.add('hidden');
+  document.getElementById('overlay').classList.add('hidden');
+}
+
+function closeAllModals() {
+  ['author-modal', 'book-modal', 'confirm-modal'].forEach(id => {
+    document.getElementById(id).classList.add('hidden');
+  });
+  document.getElementById('overlay').classList.add('hidden');
 }
 
 // ─── PAGINATION ─────────────────────────────────────────────────
@@ -314,7 +327,28 @@ function renderPagination(containerId, currentPage, totalPages, onPageChange) {
   container.appendChild(ul);
 }
 
+// ─── TOAST ──────────────────────────────────────────────────────
+let toastTimer = null;
+
+function showSuccess(message) {
+  document.getElementById('toast-message').textContent = message;
+  document.getElementById('toast').classList.remove('hidden');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => document.getElementById('toast').classList.add('hidden'), 3000);
+}
+
 // ─── UTILS ──────────────────────────────────────────────────────
+function syncBirthDateFeedback(input) {
+  const feedback = input.nextElementSibling;
+  if (input.validity.rangeOverflow) {
+    feedback.textContent = 'El autor debe tener al menos 16 años.';
+  } else if (input.validity.rangeUnderflow) {
+    feedback.textContent = 'La fecha de nacimiento no es válida.';
+  } else {
+    feedback.textContent = 'La fecha de nacimiento es obligatoria.';
+  }
+}
+
 function esc(str) {
   return String(str ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
