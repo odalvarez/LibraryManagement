@@ -8,7 +8,7 @@ services:
     volumes:
       - sqldata_prod:/var/opt/mssql
     healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P \"${DB_PASSWORD}\" -Q 'SELECT 1' -b -o /dev/null"]
+      test: ["CMD-SHELL", "bash -c 'cat < /dev/null > /dev/tcp/localhost/1433'"]
       interval: 10s
       timeout: 5s
       retries: 8
