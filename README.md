@@ -72,7 +72,7 @@ Para producción se usa Azure SQL Edge en una VM ARM, levantado con `docker-comp
 
 El enunciado no pedía lo siguiente, pero se incluyó para reflejar prácticas de desarrollo reales:
 
-**Manejo global de excepciones.** Las excepciones de negocio (`MaxBooksReachedException`, `AuthorNotFoundException`) se capturan en un middleware centralizado que devuelve siempre la misma estructura JSON con el código HTTP correspondiente. Esto evita duplicar lógica de manejo de errores en cada controller.
+**Manejo global de excepciones.** Las excepciones de negocio (`MaxBooksReachedException`, `AuthorNotFoundException`, `BookNotFoundException`, `DuplicateEmailException`) se capturan en un middleware centralizado que devuelve siempre la misma estructura JSON con el código HTTP correspondiente. Las excepciones 4xx se loguean como advertencia y las 5xx como error, evitando falsos positivos en los logs. Esto elimina duplicación de lógica de manejo de errores en cada controller.
 
 **FluentValidation.** Las validaciones de los DTOs de entrada se implementaron como clases separadas usando FluentValidation, lo que permite testearlas en aislamiento sin necesidad de levantar el contexto HTTP.
 
