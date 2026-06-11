@@ -22,8 +22,6 @@ services:
       - ASPNETCORE_ENVIRONMENT=Production
       - ConnectionStrings__DefaultConnection=Server=db,1433;Database=LibraryManagement;User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True;
       - BookSettings__MaxAllowed=${BOOK_MAX_ALLOWED:-10}
-    ports:
-      - "5000:8080"
     depends_on:
       db:
         condition: service_healthy
