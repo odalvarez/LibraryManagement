@@ -13,7 +13,7 @@ public class UpdateBookValidator : AbstractValidator<UpdateBookDto>
 
         RuleFor(x => x.Year)
             .GreaterThan(0).WithMessage("El año debe ser mayor a 0.")
-            .LessThanOrEqualTo(DateTime.Today.Year).WithMessage("El año no puede ser futuro.");
+            .LessThanOrEqualTo(_ => DateTime.Today.Year).WithMessage("El año no puede ser futuro.");
 
         RuleFor(x => x.Genre)
             .NotEmpty().WithMessage("El género es obligatorio.")

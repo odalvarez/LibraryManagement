@@ -123,10 +123,10 @@ public class BookServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task Delete_WithMissingId_ThrowsKeyNotFoundException()
+    public async Task Delete_WithMissingId_ThrowsBookNotFoundException()
     {
         var act = async () => await _sut.DeleteAsync(9999);
-        await act.Should().ThrowAsync<KeyNotFoundException>();
+        await act.Should().ThrowAsync<BookNotFoundException>();
     }
 
     [Fact]

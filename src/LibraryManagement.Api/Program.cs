@@ -4,6 +4,7 @@ using FluentValidation.AspNetCore;
 using LibraryManagement.Api.Middleware;
 using LibraryManagement.Api.Settings;
 using LibraryManagement.Application.Services;
+using LibraryManagement.Application.Validators;
 using LibraryManagement.Domain.Interfaces;
 using LibraryManagement.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -30,7 +31,7 @@ builder.Services.AddScoped<ILibraryDbContext>(sp => sp.GetRequiredService<Librar
 builder.Services.AddScoped<IAuthorService, AuthorService>();
 builder.Services.AddScoped<IBookService, BookService>();
 
-builder.Services.AddValidatorsFromAssemblyContaining<AuthorService>();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateAuthorValidator>();
 builder.Services.AddFluentValidationAutoValidation();
 
 builder.Services.AddControllers();

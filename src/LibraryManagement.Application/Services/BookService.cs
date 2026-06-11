@@ -80,7 +80,7 @@ public class BookService : IBookService
     {
         var book = await _context.Books
             .FirstOrDefaultAsync(b => b.Id == id, cancellationToken)
-            ?? throw new KeyNotFoundException($"No se encontró el libro con Id {id}.");
+            ?? throw new BookNotFoundException();
 
         var authorExists = await _context.Authors.AnyAsync(a => a.Id == authorId, cancellationToken);
         if (!authorExists)
@@ -102,7 +102,7 @@ public class BookService : IBookService
     {
         var book = await _context.Books
             .FirstOrDefaultAsync(b => b.Id == id, cancellationToken)
-            ?? throw new KeyNotFoundException($"No se encontró el libro con Id {id}.");
+            ?? throw new BookNotFoundException();
 
         book.IsDeleted = true;
         await _context.SaveChangesAsync(cancellationToken);
