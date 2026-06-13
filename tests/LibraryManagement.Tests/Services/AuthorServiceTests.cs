@@ -102,5 +102,26 @@ public class AuthorServiceTests : IDisposable
         await act.Should().ThrowAsync<AuthorNotFoundException>();
     }
 
+    [Fact]
+    public async Task Create_WithDuplicateEmail_ThrowsDuplicateEmailException()
+    {
+        await _sut.CreateAsync("Autor Original", new DateTime(1970, 1, 1), "Ciudad", "duplicado@test.com");
+
+        var act = async () => await _sut.CreateAsync("Otro Autor", new DateTime(1980, 1, 1), "Otra Ciudad", "duplicado@test.com");
+
+        await act.Should().ThrowAsync<DuplicateEmailException>();
+    }
+
+    [Fact]
+    public async Task Update_WithDuplicateEmail_ThrowsDuplicateEmailException()
+    {
+        await _sut.CreateAsync("Autor A", new DateTime(1970, 1, 1), "Ciudad A", "autora@test.com");
+        var autorB = await _sut.CreateAsync("Autor B", new DateTime(1975, 1, 1), "Ciudad B", "autorb@test.com");
+
+        var act = async () => await _sut.UpdateAsync(autorB.Id, "Autor B", new DateTime(1975, 1, 1), "Ciudad B", "autora@test.com");
+
+        await act.Should().ThrowAsync<DuplicateEmailException>();
+    }
+
     public void Dispose() => _context.Dispose();
 }

@@ -140,5 +140,29 @@ public class BookServiceTests : IDisposable
         await act.Should().ThrowAsync<AuthorNotFoundException>();
     }
 
+    [Fact]
+    public async Task Update_WithValidData_UpdatesBook()
+    {
+        var author = await SeedAuthorAsync();
+        var book = await _sut.CreateAsync("Título Original", 2000, "Drama", 100, author.Id);
+
+        var result = await _sut.UpdateAsync(book.Id, "Título Actualizado", 2005, "Comedia", 250, author.Id);
+
+        result.Title.Should().Be("Título Actualizado");
+        result.Year.Should().Be(2005);
+        result.Genre.Should().Be("Comedia");
+        result.Pages.Should().Be(250);
+    }
+
+    [Fact]
+    public async Task Update_WithNonExistentBook_ThrowsBookNotFoundException()
+    {
+        var author = await SeedAuthorAsync();
+
+        var act = async () => await _sut.UpdateAsync(9999, "Título", 2000, "Drama", 100, author.Id);
+
+        await act.Should().ThrowAsync<BookNotFoundException>();
+    }
+
     public void Dispose() => _context.Dispose();
 }
